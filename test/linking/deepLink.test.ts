@@ -23,8 +23,8 @@ test('app scheme film links survive a link with no genre segment', () => {
 });
 
 test('app scheme links that are not films do not navigate', () => {
-  assert.equal(parseDeepLink('lumen://home'), null);
-  assert.equal(parseDeepLink('lumen://film/'), null);
+  assert.equal(parseDeepLink('watchtv://home'), null);
+  assert.equal(parseDeepLink('watchtv://film/'), null);
   // an encoded path that is not a film page must not reach the film screen
   assert.equal(parseDeepLink(buildFilmDeepLink('/announce')), null);
 });

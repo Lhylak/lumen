@@ -1,7 +1,7 @@
 {
-  "name": "Lumen App",
-  "slug": "lumen",
-  "scheme": "lumen",
+  "name": "WatchTV",
+  "slug": "watchtv",
+  "scheme": "watchtv",
   "version": "1.6.2",
   "userInterfaceStyle": "automatic",
   "icon": "./assets/images/app-icon-all.png",

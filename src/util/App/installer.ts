@@ -14,7 +14,7 @@ export class Installer {
   // instead of capping the total time — a big APK over a slow TV connection
   // is legitimately slow, a dead socket is not
   private static readonly STALL_TIMEOUT = 60000;
-  private static readonly APK_NAME = 'lumen-update.apk';
+  private static readonly APK_NAME = 'watchtv-update.apk';
 
   static async downloadAndInstallApk(
     url: string,

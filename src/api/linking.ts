@@ -31,7 +31,7 @@ const HELP_PATH_REGEXP = /^\/help\/[^/]+\/?$/;
  * system rather than receives from the web - currently the Android TV
  * recommendations channels, whose cards are opened by the launcher.
  */
-const APP_SCHEME = 'lumen://';
+const APP_SCHEME = 'watchtv://';
 const APP_FILM_PREFIX = `${APP_SCHEME}film/`;
 
 /** Opens the app without navigating anywhere, ex. a TV channel logo. */

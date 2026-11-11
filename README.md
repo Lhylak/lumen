@@ -1,6 +1,6 @@
-# Lumen app
+# WatchTV
 
-Lumen App is an application to view films on TV and Mobile. This application is unofficial and the administration of the rezka site has nothing to do with it!
+WatchTV is an application to view films on TV and Mobile. This application is unofficial and the administration of the rezka site has nothing to do with it!
 
 ## Features
 
@@ -13,7 +13,7 @@ Lumen App is an application to view films on TV and Mobile. This application is 
 And more!
 
 ##  Compatibility
-Lumen app requires Android 7.0 or above and it should work on any android device:
+WatchTV requires Android 7.0 or above and it should work on any android device:
 
 - Mobile phones, Tablets
 - Android TVs & Google TVs

@@ -5,13 +5,13 @@
 // so signing a single hardcoded app-release.apk is no longer enough.
 //
 // The keystore password is resolved in this order:
-//   1. LUMEN_KEYSTORE_PASSWORD          (real env var, or .env.local / .env)
-//   2. LUMEN_KEYSTORE_PASSWORD_FILE     (path to a file whose first line is it)
+//   1. WATCHTV_KEYSTORE_PASSWORD          (real env var, or .env.local / .env)
+//   2. WATCHTV_KEYSTORE_PASSWORD_FILE     (path to a file whose first line is it)
 //   3. an interactive prompt
 // so it is asked for at most once per run. Both env files are gitignored.
-// Optional overrides: LUMEN_KEYSTORE, LUMEN_KEY_ALIAS.
+// Optional overrides: WATCHTV_KEYSTORE, WATCHTV_KEY_ALIAS.
 //
-// Signed APKs land in dist/ as lumen-<abi>.apk.
+// Signed APKs land in dist/ as watchtv-<abi>.apk.
 
 import { spawnSync } from 'node:child_process';
 import { existsSync, mkdirSync, readdirSync, readFileSync } from 'node:fs';
@@ -69,7 +69,7 @@ const promptPassword = (label) => new Promise((resolve, reject) => {
   if (!process.stdin.isTTY) {
     reject(new Error(
       'No keystore password found and no TTY to ask for one. '
-      + 'Set LUMEN_KEYSTORE_PASSWORD in .env.local.'
+      + 'Set WATCHTV_KEYSTORE_PASSWORD in .env.local.'
     ));
 
     return;
@@ -126,19 +126,19 @@ const promptPassword = (label) => new Promise((resolve, reject) => {
 });
 
 const resolvePassword = async (env, keystore) => {
-  if (env.LUMEN_KEYSTORE_PASSWORD) {
-    console.log('Using keystore password from LUMEN_KEYSTORE_PASSWORD.');
+  if (env.WATCHTV_KEYSTORE_PASSWORD) {
+    console.log('Using keystore password from WATCHTV_KEYSTORE_PASSWORD.');
 
-    return env.LUMEN_KEYSTORE_PASSWORD;
+    return env.WATCHTV_KEYSTORE_PASSWORD;
   }
 
-  const file = env.LUMEN_KEYSTORE_PASSWORD_FILE;
+  const file = env.WATCHTV_KEYSTORE_PASSWORD_FILE;
 
   if (file) {
     const resolved = path.resolve(ROOT, file);
 
     if (!existsSync(resolved)) {
-      throw new Error(`LUMEN_KEYSTORE_PASSWORD_FILE points at a missing file: ${resolved}`);
+      throw new Error(`WATCHTV_KEYSTORE_PASSWORD_FILE points at a missing file: ${resolved}`);
     }
 
     const password = readFileSync(resolved, 'utf8').split(/\r?\n/)[0].trim();
@@ -157,8 +157,8 @@ const resolvePassword = async (env, keystore) => {
 
 const main = async () => {
   const env = loadEnv();
-  const keystore = env.LUMEN_KEYSTORE ?? 'lumen.keystore';
-  const keyAlias = env.LUMEN_KEY_ALIAS ?? 'lumen';
+  const keystore = env.WATCHTV_KEYSTORE ?? 'watchtv.keystore';
+  const keyAlias = env.WATCHTV_KEY_ALIAS ?? 'watchtv';
 
   if (!existsSync(path.resolve(ROOT, keystore))) {
     throw new Error(`Keystore not found: ${keystore}`);
@@ -173,8 +173,8 @@ const main = async () => {
     .filter(({ match }) => match !== null)
     .map(({ file, match }) => ({
       input: path.join(APK_DIR, file),
-      // app-arm64-v8a-release.apk -> lumen-arm64-v8a.apk, app-release.apk -> lumen.apk
-      output: path.join(OUT_DIR, `lumen${match[1] ? `-${match[1].slice(0, -1)}` : ''}.apk`),
+      // app-arm64-v8a-release.apk -> watchtv-arm64-v8a.apk, app-release.apk -> watchtv.apk
+      output: path.join(OUT_DIR, `watchtv${match[1] ? `-${match[1].slice(0, -1)}` : ''}.apk`),
     }));
 
   if (apks.length === 0) {

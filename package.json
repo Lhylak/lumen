@@ -1,5 +1,5 @@
 {
-  "name": "lumen",
+  "name": "watchtv",
   "version": "0.0.1",
   "private": true,
   "main": "index.tsx",
@@ -18,7 +18,7 @@
     "adb:connect": "adb connect 192.168.1.104",
     "adb:disconnect": "adb disconnect 192.168.1.104",
     "adb:install:dev": "adb install android/app/build/outputs/apk/release/app-release.apk",
-    "adb:install:prod": "adb install -r dist/lumen-armeabi-v7a.apk",
+    "adb:install:prod": "adb install -r dist/watchtv-armeabi-v7a.apk",
     "postinstall": "patch-package"
   },
   "dependencies": {

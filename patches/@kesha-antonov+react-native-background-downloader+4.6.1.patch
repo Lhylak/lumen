@@ -7,7 +7,7 @@ index 84b0206..341d1aa 100644
      const val UNMETERED_RECHECK_DELAY_MS = 3_000L
  
 +    // ========== Transient Error Recovery ==========
-+    // LUMEN PATCH: a download that loses its connection waits and reconnects from
++    // WATCHTV PATCH: a download that loses its connection waits and reconnects from
 +    // its byte offset instead of failing outright.
 +    // See ResumableDownloader.downloadWithResume.
 +
@@ -42,7 +42,7 @@ index e9e582d..945c285 100644
 -    // SecurityException for app-specific external storage paths. Use ResumableDownloader instead.
 -    if (Build.VERSION.SDK_INT >= 36) {
 -      logD(NAME, "Android 16+ detected: Using ResumableDownloader to avoid DownloadManager path restrictions")
-+    // LUMEN PATCH: use ResumableDownloader on every Android version, not only on
++    // WATCHTV PATCH: use ResumableDownloader on every Android version, not only on
 +    // Android 16+ (API 36).
 +    //
 +    // Upstream only takes this path when DownloadManager's path restrictions force
@@ -68,7 +68,7 @@ index e9e582d..945c285 100644
 +    // the compiler - no unreachable-code warnings, and the patch stays a one-line
 +    // change that is easy to re-apply on the next upgrade.
 +    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BASE) {
-+      logD(NAME, "Lumen patch: using ResumableDownloader on every Android version")
++      logD(NAME, "WatchTV patch: using ResumableDownloader on every Android version")
        startWithResumableDownloader()
        return
      }
@@ -89,7 +89,7 @@ index 9f74748..f25cb67 100644
      val destFile = File(destination)
  
 -    // Clean up any existing destination file if starting fresh (startByte == 0)
-+    // LUMEN PATCH: a caller asking for a fresh start (startByte == 0) that finds
++    // WATCHTV PATCH: a caller asking for a fresh start (startByte == 0) that finds
 +    // bytes already on disk continues from them instead of throwing them away.
 +    //
 +    // This is what makes the downloads screen's restart button resume. The JS side
@@ -140,7 +140,7 @@ index 9f74748..f25cb67 100644
    fun getBytesTotal(id: String): Long = activeDownloads[id]?.bytesTotal ?: -1
  
 +  /**
-+   * LUMEN PATCH: a dropped connection is not a failure yet.
++   * WATCHTV PATCH: a dropped connection is not a failure yet.
 +   *
 +   * Switching Wi-Fi networks, or falling back to mobile data, aborts the socket
 +   * mid-read ("unexpected end of stream"). Upstream reports that straight to JS as
@@ -326,7 +326,7 @@ index 9f74748..f25cb67 100644
 -          val error = DownloadResult.httpError(state.id, responseCode, "Range not satisfiable")
 -          listener.onError(state.id, error.message, error.errorCode)
 -          return error
-+          // LUMEN PATCH: the offset we resumed from does not fit this url - the file
++          // WATCHTV PATCH: the offset we resumed from does not fit this url - the file
 +          // on disk is stale, or the server's copy shrank. Start over instead of
 +          // failing: the offset was inferred from the file (see registerNewDownload),
 +          // so the caller never asked for it and cannot be expected to correct it.
@@ -393,7 +393,7 @@ index b41bb0f..3fbe077 100644
          // RNBackgroundDownloader is guaranteed to be non-null here since initializeEventListeners
          // is only called after ensureNativeModuleInitialized() succeeds
 -        const eventEmitter = new react_native_1.NativeEventEmitter(RNBackgroundDownloader);
-+        // LUMEN PATCH: mirrors the src/index.ts change - on Android the module has no
++        // WATCHTV PATCH: mirrors the src/index.ts change - on Android the module has no
 +        // JS-visible addListener/removeListeners under the new architecture, so passing
 +        // it only produces two NativeEventEmitter warnings. See src/index.ts for why.
 +        const eventEmitter = new react_native_1.NativeEventEmitter(react_native_1.Platform.OS === 'android' ? undefined : RNBackgroundDownloader);
@@ -410,7 +410,7 @@ index 530669b..b708bdd 100644
      // is only called after ensureNativeModuleInitialized() succeeds
 -    const eventEmitter = new NativeEventEmitter(RNBackgroundDownloader!)
 +    //
-+    // LUMEN PATCH: do not hand the native module to NativeEventEmitter on Android.
++    // WATCHTV PATCH: do not hand the native module to NativeEventEmitter on Android.
 +    //
 +    // This branch also runs on Android under the new architecture (the check above
 +    // is iOS-only by construction), where NativeModules.RNBackgroundDownloader

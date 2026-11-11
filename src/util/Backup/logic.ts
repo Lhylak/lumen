@@ -12,14 +12,17 @@ import { NotificationItemInterface } from 'Type/Notification.interface';
 import { safeJsonParse } from 'Util/Json';
 
 /** Stamped into every file and checked on import -- a JSON file from anywhere else is refused. */
-export const BACKUP_APP_ID = 'lumen';
+export const BACKUP_APP_ID = 'watchtv';
+
+/** IDs stamped by earlier builds of the app (before the rename), still accepted on import. */
+export const LEGACY_BACKUP_APP_IDS: readonly string[] = ['lumen'];
 
 /** Bumped only when the shape of the file changes; a newer file is refused by an older build. */
 export const BACKUP_FORMAT_VERSION = 1;
 
 export const BACKUP_MIME_TYPE = 'application/json';
 
-export const BACKUP_FILE_PREFIX = 'lumen-backup';
+export const BACKUP_FILE_PREFIX = 'watchtv-backup';
 
 /** The settings groups, in the order the settings screen lists them. */
 export const SETTINGS_SECTIONS = [
@@ -271,7 +274,7 @@ export const parseBackupFile = (raw: string | null | undefined): BackupFileInter
     return null;
   }
 
-  if (parsed.app !== BACKUP_APP_ID) {
+  if (parsed.app !== BACKUP_APP_ID && !LEGACY_BACKUP_APP_IDS.includes(parsed.app as string)) {
     return null;
   }
 

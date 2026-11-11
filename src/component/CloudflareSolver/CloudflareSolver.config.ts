@@ -31,8 +31,8 @@ export const CHALLENGE_PROBE_SCRIPT = `
 
   report();
 
-  if (!window.__lumenCfProbe) {
-    window.__lumenCfProbe = setInterval(report, 1000);
+  if (!window.__watchtvCfProbe) {
+    window.__watchtvCfProbe = setInterval(report, 1000);
   }
 })();
 true;
