@@ -11,6 +11,10 @@
 // so it is asked for at most once per run. Both env files are gitignored.
 // Optional overrides: WATCHTV_KEYSTORE, WATCHTV_KEY_ALIAS.
 //
+// Setups from before the rename keep working: LUMEN_* variables are read when
+// the WATCHTV_* one is not set, and without an explicit keystore an existing
+// lumen.keystore (alias "lumen") is used if watchtv.keystore is not there.
+//
 // Signed APKs land in dist/ as watchtv-<abi>.apk.
 
 import { spawnSync } from 'node:child_process';
@@ -62,7 +66,31 @@ const loadEnv = () => {
     // Earlier files win, and a real env var wins over both.
     .reduceRight((env, file) => ({ ...env, ...readEnvFile(file) }), {});
 
-  return { ...fromFiles, ...process.env };
+  const env = { ...fromFiles, ...process.env };
+
+  // Fall back to the pre-rename LUMEN_* names.
+  for (const [key, value] of Object.entries(env)) {
+    const renamed = key.replace(/^LUMEN_/, 'WATCHTV_');
+
+    if (renamed !== key && env[renamed] === undefined) {
+      env[renamed] = value;
+    }
+  }
+
+  return env;
+};
+
+const resolveKeystore = (env) => {
+  if (env.WATCHTV_KEYSTORE) {
+    return { keystore: env.WATCHTV_KEYSTORE, keyAlias: env.WATCHTV_KEY_ALIAS ?? 'watchtv' };
+  }
+
+  // Pre-rename keystore, used only when there is no new one.
+  if (!existsSync(path.resolve(ROOT, 'watchtv.keystore')) && existsSync(path.resolve(ROOT, 'lumen.keystore'))) {
+    return { keystore: 'lumen.keystore', keyAlias: env.WATCHTV_KEY_ALIAS ?? 'lumen' };
+  }
+
+  return { keystore: 'watchtv.keystore', keyAlias: env.WATCHTV_KEY_ALIAS ?? 'watchtv' };
 };
 
 const promptPassword = (label) => new Promise((resolve, reject) => {
@@ -157,8 +185,7 @@ const resolvePassword = async (env, keystore) => {
 
 const main = async () => {
   const env = loadEnv();
-  const keystore = env.WATCHTV_KEYSTORE ?? 'watchtv.keystore';
-  const keyAlias = env.WATCHTV_KEY_ALIAS ?? 'watchtv';
+  const { keystore, keyAlias } = resolveKeystore(env);
 
   if (!existsSync(path.resolve(ROOT, keystore))) {
     throw new Error(`Keystore not found: ${keystore}`);

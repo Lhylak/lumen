@@ -29,6 +29,15 @@ test('app scheme links that are not films do not navigate', () => {
   assert.equal(parseDeepLink(buildFilmDeepLink('/announce')), null);
 });
 
+test('links from before the rename still open films', () => {
+  const link = '/films/1-avatar-2009.html';
+  const legacy = buildFilmDeepLink(link).replace(/^watchtv:\/\//, 'lumen://');
+
+  assert.deepEqual(parseDeepLink(legacy), parseDeepLink(buildFilmDeepLink(link)));
+  assert.equal(parseDeepLink(legacy)?.kind, 'navigate');
+  assert.equal(parseDeepLink('lumen://home'), null);
+});
+
 test('https links keep working', () => {
   const target = parseDeepLink(`https://rezka.ag${FILM_LINK}`);
 

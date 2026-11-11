@@ -1,7 +1,10 @@
 {
   "name": "WatchTV",
   "slug": "watchtv",
-  "scheme": "watchtv",
+  "scheme": [
+    "watchtv",
+    "lumen"
+  ],
   "version": "1.6.2",
   "userInterfaceStyle": "automatic",
   "icon": "./assets/images/app-icon-all.png",

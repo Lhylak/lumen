@@ -32,6 +32,13 @@ const HELP_PATH_REGEXP = /^\/help\/[^/]+\/?$/;
  * recommendations channels, whose cards are opened by the launcher.
  */
 const APP_SCHEME = 'watchtv://';
+
+/**
+ * The scheme from before the app was renamed. Android TV keeps channel cards and
+ * search results the old build published, so links in it must keep opening the
+ * app; they are read as if they used APP_SCHEME. Also declared in app.json.
+ */
+const LEGACY_APP_SCHEMES = ['lumen://'];
 const APP_FILM_PREFIX = `${APP_SCHEME}film/`;
 
 /** Opens the app without navigating anywhere, ex. a TV channel logo. */
@@ -95,6 +102,12 @@ export const parseDeepLink = (url: string): DeepLinkTarget | null => {
   // is always `/` - so our own links have to be matched before it gets involved.
   if (url.startsWith(APP_SCHEME)) {
     return parseAppSchemeTarget(url);
+  }
+
+  const legacyScheme = LEGACY_APP_SCHEMES.find((scheme) => url.startsWith(scheme));
+
+  if (legacyScheme) {
+    return parseAppSchemeTarget(APP_SCHEME + url.slice(legacyScheme.length));
   }
 
   let parsed: URL;
